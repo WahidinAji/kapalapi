@@ -1,2 +1,7 @@
 .idea
+bin
+pkg/*.md
+tmp
+upload/*
+*.sh
 *.json

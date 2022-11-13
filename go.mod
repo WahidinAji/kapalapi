@@ -6,6 +6,7 @@ require github.com/gofiber/fiber/v2 v2.39.0
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/gofrs/uuid v4.3.1+incompatible // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgx/v5 v5.0.4 // indirect

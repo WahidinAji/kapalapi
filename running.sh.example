@@ -1,0 +1,10 @@
+#!/bin/bash
+
+export DATABASE_URL="postgresql://postgres:password@localhost:5432/kapalapi?sslmode=disable"
+
+
+# get air to automatically reload while the code has changed.
+curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s
+
+./bin/air
+# go run  .
