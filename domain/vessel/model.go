@@ -67,7 +67,7 @@ type Transponder struct {
 }
 type Licenses struct {
 	Type   string `json:"type" form:"type"`
-	ID     int64  `json:"id" form:"id"`
+	ID     string  `json:"id" form:"id"`
 	Expiry int64  `json:"expiry" form:"expiry"`
 }
 type Engines struct {
