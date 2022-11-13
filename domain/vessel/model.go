@@ -1,9 +1,14 @@
 package vessel
 
-import "github.com/jackc/pgx/v5"
+import (
+	"database/sql"
+
+	"github.com/jackc/pgx/v4"
+)
 
 type VesselDeps struct {
 	DB *pgx.Conn
+	PQ *sql.DB
 }
 
 type VesselIn struct {
@@ -39,10 +44,10 @@ type Vessel struct {
 	GrossTonnage         float64          `json:"grossTonnage" form:"grossTonnage"`
 	NetTonnage           float64          `json:"netTonnage" form:"netTonnage"`
 	RegionOfRegistration string           `json:"regionOfRegistration" form:"regionOfRegistration"`
-	Transponder          *Transponder      `jsonb:"transponder" form:"transponder"`
+	Transponder          *Transponder     `jsonb:"transponder" form:"transponder"`
 	Licenses             []Licenses       `jsonb:"licenses" form:"licenses"`
 	Engines              []Engines        `jsonb:"engines" form:"engines"`
-	FishingCapacity      *FishingCapacity  `jsonb:"fishingCapacity" form:"fishingCapacity"`
+	FishingCapacity      *FishingCapacity `jsonb:"fishingCapacity" form:"fishingCapacity"`
 	OwnerOperators       []OwnerOperators `jsonb:"ownerOperators" form:"ownerOperators"`
 	PreferredImage       string           `json:"preferredImage" form:"preferredImage"`
 }
@@ -62,7 +67,7 @@ type Transponder struct {
 }
 type Licenses struct {
 	Type   string `json:"type" form:"type"`
-	ID     string `json:"id" form:"id"`
+	ID     int64  `json:"id" form:"id"`
 	Expiry int64  `json:"expiry" form:"expiry"`
 }
 type Engines struct {

@@ -8,20 +8,20 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-func (d *VesselDeps) CreateService(ctx context.Context, in Vessel, header string) (*Vessel, error) {
+// func (d *VesselDeps) CreateService(ctx context.Context, in Vessel, header string) (*Vessel, error) {
 
-	userKey, err := d.GetUserKeyRepo(ctx, header)
-	if err != nil {
-		return &Vessel{}, fmt.Errorf("error getting user key: %v", err.Error())
-	}
+// 	userKey, err := d.GetUserKeyRepo(ctx, header)
+// 	if err != nil {
+// 		return &Vessel{}, fmt.Errorf("error getting user key: %v", err.Error())
+// 	}
 
-	res, err := d.CreateRepo(ctx, in, *userKey)
-	if err != nil {
-		return &Vessel{}, fmt.Errorf("error creating data: %s", err.Error())
-	}
+// 	res, err := d.CreateRepo(ctx, in, *userKey)
+// 	if err != nil {
+// 		return &Vessel{}, fmt.Errorf("error creating data: %s", err.Error())
+// 	}
 
-	return res, nil
-}
+// 	return res, nil
+// }
 
 func (d *VesselDeps) CreateNewService(ctx context.Context, in Vessel, header string) (*Vessel, error) {
 
@@ -31,10 +31,10 @@ func (d *VesselDeps) CreateNewService(ctx context.Context, in Vessel, header str
 		return &Vessel{}, fmt.Errorf("failed to generate UUID: %v", err)
 	}
 
-	
 	userKey, err := d.GetUserKeyRepo(ctx, header)
 	if err != nil {
-		return &Vessel{}, fmt.Errorf("error getting user key: %s", err.Error())
+		fmt.Printf("\nservice : %v \n", in)
+		return &Vessel{}, fmt.Errorf("error getting user key: %v", err)
 	}
 
 	res, err := d.CreateNewRepo(ctx, in, *userKey, fmt.Sprint(&vesselUuid))
@@ -45,19 +45,66 @@ func (d *VesselDeps) CreateNewService(ctx context.Context, in Vessel, header str
 	return res, nil
 }
 
-func (d *VesselDeps) FindByUserKeyService(ctx context.Context, userKey UserKey) (*Vessel, error) {
-	res, err := d.FindByUserKeyRepo(ctx, userKey)
-	if err != nil {
-		return &Vessel{}, err
-	}
+// func (d *VesselDeps) FindByUserKeyService(ctx context.Context, userKey UserKey) (*Vessel, error) {
+// 	res, err := d.FindByUserKeyRepo(ctx, userKey)
+// 	if err != nil {
+// 		return &Vessel{}, err
+// 	}
 
-	return res, nil
-}
+// 	return res, nil
+// }
 
 func (d *VesselDeps) GetVesselService(ctx context.Context, vesselUuid, userKey string) (*Vessel, error) {
-	res, err := d.GetVesselRepo(ctx, vesselUuid, userKey)
+	vessel, err := d.GetVesselRepo(ctx, vesselUuid, userKey)
 	if err != nil {
 		return &Vessel{}, err
 	}
-	return res, nil
+
+	transponder, err := d.GetTransponderRepo(ctx, vesselUuid, userKey)
+	if err != nil {
+		return &Vessel{}, err
+	}
+	if transponder.ID != "" {
+		vessel.Transponder = transponder
+	}
+
+	licenses, err := d.GetLicensesRepo(ctx, vesselUuid, userKey)
+	if err != nil {
+		return &Vessel{}, err
+	}
+	if len(licenses) > 0 {
+		vessel.Licenses = licenses
+	} else {
+		vessel.Licenses = []Licenses{}
+	}
+
+	engines, err := d.GetEnginesRepo(ctx, vesselUuid, userKey)
+	if err != nil {
+		return &Vessel{}, err
+	}
+	if len(engines) > 0 {
+		vessel.Engines = engines
+	} else {
+		vessel.Engines = []Engines{}
+	}
+
+	fishingCapacity, id, err := d.GetFishingCapacityRepo(ctx, vesselUuid, userKey)
+	if err != nil {
+		return &Vessel{}, err
+	}
+	if id != "" {
+		vessel.FishingCapacity = fishingCapacity
+	}
+
+	ownerOperators, err := d.GetOwnerOperatorsRepo(ctx, vesselUuid, userKey)
+	if err != nil {
+		return &Vessel{}, err
+	}
+	if len(ownerOperators) > 0 {
+		vessel.OwnerOperators = ownerOperators
+	} else {
+		vessel.OwnerOperators = []OwnerOperators{}
+	}
+
+	return vessel, nil
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"kapalapi/domain/vessel"
 	"kapalapi/pkg"
 	"log"
@@ -11,7 +12,9 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v4"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -33,12 +36,14 @@ func main() {
 		databaseUrl = "postgres://root@localhost:5432/kapalapi?sslmode=disable"
 	}
 
+	db, err := sql.Open("postgres", databaseUrl)
+
 	conn, err := pgx.Connect(ctx, databaseUrl)
 	if err != nil {
 		log.Fatalf("error connecting to database server : %v", err)
 	}
 
-	errMigrate := pkg.Mig(ctx, conn)
+	errMigrate := pkg.Migration(ctx, db)
 	if errMigrate != nil {
 		log.Fatal(errMigrate)
 	}
@@ -52,7 +57,7 @@ func main() {
 		AllowMethods: "GET, POST, PATCH, PUT, DELETE",
 	}))
 
-	vessel := vessel.VesselDeps{DB: conn}
+	vessel := vessel.VesselDeps{DB: conn, PQ: db}
 	vessel.VesselRoutes(app)
 
 	app.Get("/upload/:", func(c *fiber.Ctx) error {
