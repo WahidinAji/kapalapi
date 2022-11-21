@@ -31,6 +31,11 @@ func main() {
 
 	ctx := context.TODO()
 
+	port, ok := os.LookupEnv("PORT")
+	if !ok {
+		port = "3000"
+	}
+
 	databaseUrl, ok := os.LookupEnv("DATABASE_URL")
 	if !ok {
 		databaseUrl = "postgres://root@localhost:5432/kapalapi?sslmode=disable"
@@ -70,5 +75,5 @@ func main() {
 		return c.SendFile("." + getPathUri[1])
 	})
 
-	app.Listen(":3000")
+	app.Listen(":" + port)
 }
