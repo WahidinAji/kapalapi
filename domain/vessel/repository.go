@@ -369,20 +369,25 @@ func (d *VesselDeps) GetAllRepo(ctx context.Context) ([]VesselGet, error) {
 		return nil, ErrConnPool
 	}
 	var vesselGet []VesselGet
-	query := "select uk.id, uk.uuid as user_key_id, v.uuid as vessel_secret_key, v.created_at from user_keys as uk left join vessel as v on uk.id=v.user_key_id;"
+	query := "select uk.id, uk.uuid as user_key_id, v.uuid as vessel_secret_key, v.created_at from user_keys as uk left join vessel as v on uk.id=v.user_key_id limit 500;"
 	record, err := d.PQ.QueryContext(ctx, query)
 
 	if err != nil {
 		return nil, ErrQuery
 	}
 
-	if record.Next() {
+	var id int = 0
+	for record.Next() {
+		id += 1
 		var vessel VesselGet
 		if err := record.Scan(&vessel.Id, &vessel.UserKeyId, &vessel.VesselSecretKey, &vessel.CreatedAt); err != nil {
 			return nil, ErrScan
 		}
+		vessel.Id = fmt.Sprint(id)
+		fmt.Print(id)
 		vesselGet = append(vesselGet, vessel)
 	}
+	//log.Println(vesselGet)
 	return vesselGet, nil
 }
 
