@@ -2,6 +2,7 @@ package vessel
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -107,4 +108,21 @@ func (d *VesselDeps) GetVesselService(ctx context.Context, vesselUuid, userKey s
 	}
 
 	return vessel, nil
+}
+
+func (d *VesselDeps) GetAllService(ctx context.Context) ([]VesselGet, error) {
+	record, err := d.GetAllRepo(ctx)
+	if err != nil {
+		if errors.Is(err, ErrConnPool) {
+			return nil, err
+		}
+		if errors.Is(err, ErrQuery) {
+			return nil, err
+		}
+		if errors.Is(err, ErrScan) {
+			return nil, err
+		}
+		return nil, fmt.Errorf("error on service :%v", err)
+	}
+	return record, nil
 }

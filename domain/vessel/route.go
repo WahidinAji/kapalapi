@@ -9,6 +9,7 @@ import (
 
 func (d *VesselDeps) VesselRoutes(app *fiber.App) {
 	api := app.Group("/api", logger.New())
+	api.Get("/vessel-keys", d.GetAll)
 	api.Use(middleware.IsHeader)
 	// api.Get("/vessel/v2", d.FindByUserKey)
 	// api.Post("/vessel/v2", d.Create)

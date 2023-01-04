@@ -362,3 +362,41 @@ func (d *VesselDeps) GetOwnerOperatorsRepo(ctx context.Context, vesselUuid, user
 	}
 	return ownerOperators, nil
 }
+
+func (d *VesselDeps) GetAllRepo(ctx context.Context) ([]VesselGet, error) {
+	err := d.PQ.Ping()
+	if err != nil {
+		return nil, ErrConnPool
+	}
+	var vesselGet []VesselGet
+	query := "select uk.id, uk.uuid as user_key_id, v.uuid as vessel_secret_key, v.created_at from user_keys as uk left join vessel as v on uk.id=v.user_key_id;"
+	record, err := d.PQ.QueryContext(ctx, query)
+
+	if err != nil {
+		return nil, ErrQuery
+	}
+
+	if record.Next() {
+		var vessel VesselGet
+		if err := record.Scan(&vessel.Id, &vessel.UserKeyId, &vessel.VesselSecretKey, &vessel.CreatedAt); err != nil {
+			return nil, ErrScan
+		}
+		vesselGet = append(vesselGet, vessel)
+	}
+	return vesselGet, nil
+}
+
+type VesselGet struct {
+	Id              string `json:"id"`
+	UserKeyId       string `json:"user_key_id"`
+	VesselSecretKey string `json:"vessel_secret_key"`
+	CreatedAt       string `json:"created_at"`
+}
+
+var (
+	ErrConnPool = errors.New("error getting connetion pool")
+	ErrQuery    = errors.New("error getting query")
+	ErrScan     = errors.New("error scanning data")
+)
+
+//"query: select uk.id, uk.uuid as user_key_id, v.uuid as vessel_secret_key, v.created_at from user_keys as uk left join vessel as v"

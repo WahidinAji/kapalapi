@@ -210,3 +210,19 @@ func (d *VesselDeps) GetVessel(c *fiber.Ctx) error {
 
 // 	return c.Status(fiber.StatusOK).JSON(vesselImage.Filename)
 // }
+
+func (d *VesselDeps) GetAll(c *fiber.Ctx) error {
+	record, err := d.GetAllService(c.Context())
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  "failes",
+			"message": err.Error(),
+			"data":    nil,
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":  "success",
+		"message": "successfully get records",
+		"data":    record,
+	})
+}
