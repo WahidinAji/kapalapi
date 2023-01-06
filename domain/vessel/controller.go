@@ -1,6 +1,7 @@
 package vessel
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -215,7 +216,41 @@ func (d *VesselDeps) GetAll(c *fiber.Ctx) error {
 	record, err := d.GetAllService(c.Context())
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  "failes",
+			"status":  "failed",
+			"message": err.Error(),
+			"data":    nil,
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":  "success",
+		"message": "successfully get records",
+		"data":    record,
+	})
+}
+
+func (d *VesselDeps) GetVesselBydate(c *fiber.Ctx) error {
+
+	inQuery := new(SelectDateIn)
+	if err := c.QueryParser(inQuery); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  "failed",
+			"message": err.Error(),
+			"data":    nil,
+		})
+	}
+
+	record, err := d.GetVesselByDateService(c.Context(), *inQuery)
+	if err != nil {
+		if errors.Is(err, ErrQuery) {
+
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"status":  "failed",
+				"message": "date not valid, please enter a valid date",
+				"data":    nil,
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  "failed",
 			"message": err.Error(),
 			"data":    nil,
 		})

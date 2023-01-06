@@ -2,6 +2,7 @@ package vessel
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/jackc/pgx/v4"
 )
@@ -67,7 +68,7 @@ type Transponder struct {
 }
 type Licenses struct {
 	Type   string `json:"type" form:"type"`
-	ID     string  `json:"id" form:"id"`
+	ID     string `json:"id" form:"id"`
 	Expiry int64  `json:"expiry" form:"expiry"`
 }
 type Engines struct {
@@ -107,3 +108,30 @@ type PreferredImage struct {
 	VesselImage         string `json:"vesselImage"`
 	OwnerOperatorsImage string `json:"ownerOperatorsImage"`
 }
+
+// this struct is used for getting vessel by user_key.
+type VesselGet struct {
+	Id              string `json:"id"`
+	UserKeyId       string `json:"user_key_id"`
+	VesselSecretKey string `json:"vessel_secret_key"`
+	CreatedAt       string `json:"created_at"`
+}
+
+type SelectDateIn struct {
+	From string `json:"from" query:"from"`
+	To   string `json:"to" query:"to"`
+}
+
+type SelectDateOut struct {
+	Id string `json:"id"`
+	CreatedBy string `json:"created_by"`
+	CreatedAt string `json:"created_at"`
+	Vessel
+}
+
+
+var (
+	ErrConnPool = errors.New("error getting connetion pool")
+	ErrQuery    = errors.New("error getting query")
+	ErrScan     = errors.New("error scanning data")
+)

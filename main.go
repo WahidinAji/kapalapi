@@ -19,6 +19,12 @@ import (
 
 func main() {
 
+	// then := time.Now().AddDate(0, 0, -1).Format("2022-01-01")
+	// two := time.Now().Add(-24 * time.Hour).Format("2022-01-01")
+	// fmt.Println(then)
+	// fmt.Println(two)
+	// fmt.Println(time.Now().AddDate(0, 0, -1).Format("2006-01-02"))
+
 	// var arr []vessel.UserKey
 	// var i int64
 	// for i = 0; i < 4; i++ {

@@ -126,3 +126,20 @@ func (d *VesselDeps) GetAllService(ctx context.Context) ([]VesselGet, error) {
 	}
 	return record, nil
 }
+
+func (d *VesselDeps) GetVesselByDateService(ctx context.Context, in SelectDateIn) ([]SelectDateOut, error) {
+	out, err := d.GetVesselByDateRepo(ctx, in)
+	if err != nil {
+		if errors.Is(err, ErrConnPool) {
+			return nil, err
+		}
+		if errors.Is(err, ErrQuery) {
+			return nil, err
+		}
+		if errors.Is(err, ErrScan) {
+			return nil, err
+		}
+		return nil, fmt.Errorf("error on service :%v", err)
+	}
+	return out, nil
+}

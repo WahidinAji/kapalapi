@@ -391,17 +391,32 @@ func (d *VesselDeps) GetAllRepo(ctx context.Context) ([]VesselGet, error) {
 	return vesselGet, nil
 }
 
-type VesselGet struct {
-	Id              string `json:"id"`
-	UserKeyId       string `json:"user_key_id"`
-	VesselSecretKey string `json:"vessel_secret_key"`
-	CreatedAt       string `json:"created_at"`
+func (d *VesselDeps) GetVesselByDateRepo(ctx context.Context, in SelectDateIn) ([]SelectDateOut, error) {
+	err := d.PQ.Ping()
+	if err != nil {
+		return nil, ErrConnPool
+	}
+	query := `select name,width,length,depth,flag,call_sign,type,imo,registration,mmsi,part_of_registration,external_marking,satellite_phone,dsc_number,max_crew,hull_material,stern_type,constructor,gross_tonnage,region_of_registration,preferred_image, created_by, created_at from vessel 
+	
+	where created_at >= $1 and created_at < $2 order by created_at desc;`
+	res, err := d.PQ.QueryContext(ctx, query, in.From, in.To)
+
+	if err != nil {
+		return nil, ErrQuery
+	}
+	var out []SelectDateOut
+	var id int = 0
+	for res.Next() {
+		id += 1
+		var vessel SelectDateOut
+		errScan := res.Scan(&vessel.Name, &vessel.Width, &vessel.Length, &vessel.Depth, &vessel.Flag, &vessel.CallSign, &vessel.Type, &vessel.Imo, &vessel.Registration, &vessel.Mmsi, &vessel.PortOfRegistration, &vessel.ExternalMarking, &vessel.SatellitePhone, &vessel.DscNumber, &vessel.MaxCrew, &vessel.HullMaterial, &vessel.SternType, &vessel.Constructor, &vessel.GrossTonnage, &vessel.RegionOfRegistration, &vessel.PreferredImage, &vessel.CreatedBy, &vessel.CreatedAt)
+		if errScan != nil {
+			return nil, errScan
+		}
+		vessel.Id = fmt.Sprint(id)
+		out = append(out, vessel)
+	}
+	return out, nil
 }
 
-var (
-	ErrConnPool = errors.New("error getting connetion pool")
-	ErrQuery    = errors.New("error getting query")
-	ErrScan     = errors.New("error scanning data")
-)
-
-//"query: select uk.id, uk.uuid as user_key_id, v.uuid as vessel_secret_key, v.created_at from user_keys as uk left join vessel as v"
+// select * from vessel where created_at >= '2022-01-01' and created_at < '2023-01-03' order by created_at desc;
