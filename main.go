@@ -69,7 +69,7 @@ func main() {
 	app := fiber.New()
 	//set cors
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "https://wahidinaji.github.io/fetch-api-with-github-page/,*.takakiyo.my.id,https://kapalapi-cakrawala.koyeb.app/vessel-keys",
+		AllowOrigins: "*",
 		// AllowOrigins: "https://wahidinaji.github.io/fetch-api-with-github-page/,https://kapalapi.takakiyo.my.id,https://takakiyo.my.id,http://kapalapi.takakiyo.my.id,http://takakiyo.my.id,https://kapalapi-cakrawala.koyeb.app/vessel-keys",
 		AllowHeaders: "Origin, Content-Type, Accept,Bearer",
 		AllowMethods: "GET, POST, PATCH, PUT, DELETE",
