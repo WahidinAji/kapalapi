@@ -13,7 +13,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/template/html"
 	"github.com/jackc/pgx/v4"
 
 	_ "github.com/lib/pq"
@@ -82,13 +81,13 @@ func main() {
 	// 	MaxAge:           2592000,
 	// }))
 
-	app = fiber.New(fiber.Config{
-		Views: html.New("./domain/vessel", ".html"),
-	})
-	app.Get("/vessel-keys", func(c *fiber.Ctx) (err error) {
-		c.Render("index", fiber.Map{})
-		return
-	})
+	// app = fiber.New(fiber.Config{
+	// 	Views: html.New("./domain/vessel", ".html"),
+	// })
+	// app.Get("/vessel-keys", func(c *fiber.Ctx) (err error) {
+	// 	c.Render("index", fiber.Map{})
+	// 	return
+	// })
 
 	vessel := vessel.VesselDeps{DB: conn, PQ: db}
 	vessel.VesselRoutes(app)
