@@ -70,7 +70,7 @@ func main() {
 	//set cors
 	app.Use(cors.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://kapalapi.takakiyo.my.id/,localhost:8000/vessel-keys",
+		AllowOrigins: "http://kapalapi.takakiyo.my.id,https://kapalapi-cakrawala.koyeb.app/vessel-keys",
 		AllowHeaders: "Origin, Content-Type, Accept,Bearer",
 		AllowMethods: "GET, POST, PATCH, PUT, DELETE",
 	}))
