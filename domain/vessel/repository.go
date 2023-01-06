@@ -384,7 +384,6 @@ func (d *VesselDeps) GetAllRepo(ctx context.Context) ([]VesselGet, error) {
 			return nil, ErrScan
 		}
 		vessel.Id = fmt.Sprint(id)
-		fmt.Print(id)
 		vesselGet = append(vesselGet, vessel)
 	}
 	//log.Println(vesselGet)

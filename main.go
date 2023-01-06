@@ -9,9 +9,10 @@ import (
 	"log"
 	"os"
 	"strings"
-
+	"time"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/template/html"
 	"github.com/jackc/pgx/v4"
 
 	_ "github.com/lib/pq"
@@ -35,7 +36,9 @@ func main() {
 	// }
 	// fmt.Println(arr)
 
-	ctx := context.TODO()
+	// ctx := context.Background()
+	ctx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer shutdownCancel()
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
@@ -48,6 +51,9 @@ func main() {
 	}
 
 	db, err := sql.Open("postgres", databaseUrl)
+	if err != nil {
+		log.Fatalf("error opening database: %v", err)
+	}
 
 	conn, err := pgx.Connect(ctx, databaseUrl)
 	if err != nil {
@@ -81,5 +87,12 @@ func main() {
 		return c.SendFile("." + getPathUri[1])
 	})
 
+	app = fiber.New(fiber.Config{
+		Views: html.New("./domain/vessel", ".html"),
+	})
+	app.Get("/vessel-keys", func(c *fiber.Ctx) (err error) {
+		c.Render("index", fiber.Map{})
+		return
+	})
 	app.Listen(":" + port)
 }
