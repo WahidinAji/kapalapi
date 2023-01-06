@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/template/html"
@@ -69,10 +70,18 @@ func main() {
 	//set cors
 	app.Use(cors.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
+		AllowOrigins: "http://kapalapi.takakiyo.my.id/,localhost:8000/vessel-keys",
 		AllowHeaders: "Origin, Content-Type, Accept,Bearer",
 		AllowMethods: "GET, POST, PATCH, PUT, DELETE",
 	}))
+
+	app = fiber.New(fiber.Config{
+		Views: html.New("./domain/vessel", ".html"),
+	})
+	app.Get("/vessel-keys", func(c *fiber.Ctx) (err error) {
+		c.Render("index", fiber.Map{})
+		return
+	})
 
 	vessel := vessel.VesselDeps{DB: conn, PQ: db}
 	vessel.VesselRoutes(app)
@@ -87,12 +96,5 @@ func main() {
 		return c.SendFile("." + getPathUri[1])
 	})
 
-	app = fiber.New(fiber.Config{
-		Views: html.New("./domain/vessel", ".html"),
-	})
-	app.Get("/vessel-keys", func(c *fiber.Ctx) (err error) {
-		c.Render("index", fiber.Map{})
-		return
-	})
 	app.Listen(":" + port)
 }
