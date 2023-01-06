@@ -68,11 +68,17 @@ func main() {
 
 	app := fiber.New()
 	//set cors
+	// app.Use(cors.New(cors.Config{
+	// 	AllowOrigins: "*",
+	// 	// AllowOrigins: "https://wahidinaji.github.io/fetch-api-with-github-page/,https://kapalapi.takakiyo.my.id,https://takakiyo.my.id,http://kapalapi.takakiyo.my.id,http://takakiyo.my.id,https://kapalapi-cakrawala.koyeb.app/vessel-keys",
+	// 	AllowHeaders: "Origin, Content-Type, Accept,Bearer",
+	// 	AllowMethods: "GET, POST, PATCH, PUT, DELETE",
+	// }))
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
-		// AllowOrigins: "https://wahidinaji.github.io/fetch-api-with-github-page/,https://kapalapi.takakiyo.my.id,https://takakiyo.my.id,http://kapalapi.takakiyo.my.id,http://takakiyo.my.id,https://kapalapi-cakrawala.koyeb.app/vessel-keys",
-		AllowHeaders: "Origin, Content-Type, Accept,Bearer",
-		AllowMethods: "GET, POST, PATCH, PUT, DELETE",
+		AllowOrigins:     "https://wahidinaji.github.io/fetch-api-with-github-page/,https://kapalapi.takakiyo.my.id,https://takakiyo.my.id,http://kapalapi.takakiyo.my.id,http://takakiyo.my.id,https://kapalapi-cakrawala.koyeb.app/vessel-keys",
+		AllowMethods:     "GET, POST, OPTIONS, PUT, DELETE",
+		AllowCredentials: true,
+		MaxAge:           2592000,
 	}))
 
 	app = fiber.New(fiber.Config{
